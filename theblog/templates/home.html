@@ -1,0 +1,46 @@
+{% extends 'base.html'%}
+
+{% block content %}
+ <div class="content">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+          {% for post in post_list %}
+
+            <div class="post">
+               <h1><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h1>
+                <div class="date">
+                  <small>Published on: {{ post.created_at }}</small>
+                </div>
+                <div class="author">
+                    <small>By: {{ post.author }}</small>
+                </div>
+                  {% if user.is_authenticated %}
+                     {% if request.user == post.author%}
+                        <small><a href="{% url 'edit-post' post.pk %}">edit</a> | <a href="{% url 'delete-post' post.pk %}">delete</a></small>
+                     {% endif %}
+                  {% endif %}
+                         <br>
+                         <p>{{ post.body|truncatechars:250|linebreaksbr|safe }}</p>
+                         <hr>
+            </div>
+  {% endfor %}
+          <div class="pagination">
+            <span class="step-links">
+               {% if page_obj.has_previous %}
+                  <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+               {% endif %}
+
+                <span class="current">
+                   Page {{ page_obj.number }}
+                </span>
+
+                {% if page_obj.has_next %}
+                   <a href="?page={{ page_obj.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+          </div>
+        </div>
+    </div>
+ </div>
+
+{% endblock %}

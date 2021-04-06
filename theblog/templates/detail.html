@@ -1,0 +1,66 @@
+{% extends 'base.html'%}
+
+{% block content %}
+
+<div class="content">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+           <div class="post">
+              <h1>{{ post_detail.title }}</h1>
+               <div class="date">
+              <small>Published on: {{ post_detail.created_at }}</small>
+               </div>
+               <div class="author">
+              <small>By: {{ post_detail.author }}</small>
+               </div>
+               {% if user.is_authenticated %}
+                   {% if request.user == post_detail.author%}
+                    <small><a href="{% url 'edit-post' post_detail.pk %}">edit</a> | <a href="{% url 'delete-post' post_detail.pk %}">delete</a></small>
+                    {% endif %}
+               {% endif %}
+            <br>
+              <p>{{ post_detail.body|safe }}</p>
+            <hr>
+           </div>
+        </div>
+    </div>
+</div>
+    <div class="content">
+        <div class="row justify-content-center">
+           <div class="col-md-8">
+              <h5>Comments {{ post_detail.comments.all.count }}</h5>
+               <ul>
+                    {% if post_detail.comments %}
+                     {% for item in post_detail.comments.all %}
+                        <li>
+                          Date: {{item.created}}<br>
+                          By: {{item.author}}<br>
+
+                          {{ item.text }}
+                        </li>
+
+                      {% endfor %}
+                     {% else %}
+                       <p>No comments yet</p>
+                     {% endif %}
+                   </ul>
+
+                 <hr>
+                 {% if user.is_authenticated %}
+                  <h6>Add Comment</h6>
+                     <div class="form-group col-md-6">
+                        <form method="POST">
+                          {% csrf_token %}
+                            {{ form.as_p }}
+                        <button class="btn btn-secondary">Add Comment</button>
+                        </form>
+                     </div>
+                  {% else %}
+                    <p><a href="{% url 'register' %}">Please register</a> to leave a comment...</p>
+                   {% endif %}
+
+           </div>
+        </div>
+    </div>
+
+{% endblock %}
